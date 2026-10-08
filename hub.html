@@ -1999,40 +1999,6 @@ function openReport(url, title) {
       loader.classList.add('hide');
       setTimeout(function(){ loader.classList.remove('hide'); loader.style.display='none'; }, 320);
     }
-    // Demo mode: auto-fill search inputs in aggregate reports with the demo carrier domain
-    if (HUB._demoMode && HUB.carrierDomain) {
-      try {
-        var _domain = HUB.carrierDomain;
-        var _doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
-        if (_doc) {
-          var _s = _doc.createElement('script');
-          _s.textContent = '(function(domain){'
-            + 'var attempts=0,t=setInterval(function(){'
-            + 'if(++attempts>100){clearInterval(t);return;}'
-            + 'var inp=document.querySelector("input[type=text],input[type=search],input:not([type])");'
-            + 'if(!inp||inp.dataset.demoFilled)return;'
-            + 'inp.dataset.demoFilled="1";'
-            + 'clearInterval(t);'
-            + 'try{var nv=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value");'
-            + 'if(nv&&nv.set)nv.set.call(inp,domain);else inp.value=domain;}'
-            + 'catch(e){inp.value=domain;}'
-            + 'inp.dispatchEvent(new Event("input",{bubbles:true}));'
-            + 'inp.dispatchEvent(new Event("change",{bubbles:true}));'
-            + 'inp.focus();'
-            + 'setTimeout(function(){'
-            + 'var btn=document.querySelector("button[type=submit]")||'
-            + 'Array.from(document.querySelectorAll("button")).find(function(b){'
-            + 'var t=(b.textContent||"").toLowerCase();'
-            + 'return t.indexOf("generat")>-1||t.indexOf("search")>-1||t.indexOf("view")>-1||t.indexOf("brief")>-1;'
-            + '})||document.querySelector("button");'
-            + 'if(btn)btn.click();'
-            + '},500);'
-            + '},100);})'
-            + '(' + JSON.stringify(_domain) + ');';
-          (_doc.head || _doc.body || _doc.documentElement).appendChild(_s);
-        }
-      } catch(e) { console.warn('[hub] demo autofill error:', e); }
-    }
   };
   // Use embedded blob URL for aggregate reports (avoids external file dependency)
   var _aggKey = _aggFileMap && _aggFileMap[url];
